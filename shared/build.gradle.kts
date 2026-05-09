@@ -23,8 +23,15 @@ kotlin {
     }
     
     sourceSets {
+
+        androidMain.dependencies {
+            implementation(libs.androidx.lifecycle.viewmodel.ktx)
+        }
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            implementation(libs.kotlinx.coroutines.core)
+        }
+        iosMain.dependencies {
+
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
