@@ -8,10 +8,10 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class ArticlesViewModel: BaseViewModel()  {
-    private val _articleState: MutableStateFlow<ArticlesState> = MutableStateFlow(ArticlesState(loading = true))
+    private val _articlesState: MutableStateFlow<ArticlesState> = MutableStateFlow(ArticlesState(loading = true))
 
-    val articleState: StateFlow<ArticlesState>
-        get() = _articleState
+    val articlesState: StateFlow<ArticlesState>
+        get() = _articlesState
 
     init {
         getArticles()
@@ -23,7 +23,7 @@ class ArticlesViewModel: BaseViewModel()  {
 
             delay(500.milliseconds)
 
-            _articleState.emit(ArticlesState(articles = fetchedArticles))
+            _articlesState.emit(ArticlesState(articles = fetchedArticles))
         }
     }
 
