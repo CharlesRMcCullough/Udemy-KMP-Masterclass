@@ -1,6 +1,7 @@
 package com.charlesmccullough.dailypulse.articles
 
 import com.charlesmccullough.dailypulse.BaseViewModel
+import com.charlesmccullough.dailypulse.CancellableHandle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,10 +24,10 @@ class ArticlesViewModel: BaseViewModel()  {
             "https://media.wired.com/photos/622aa5c8cca6acf55fb70b57/191:100/w_1280,c_limit/iPhone-13-Pro-Colors-SOURCE-Apple-Gear.jpg",
         ),
         Article(
-            "Samsung details ‘Galaxy AI’ and a feature that can translate phone calls in real time",
-            "In a new blog post, Samsung previewed what it calls “a new era of Galaxy AI” coming to its smartphones and detailed a feature that will use artificial intelligence to translate phone calls in real time.",
+            "Samsung Galaxy S23 Ultra review: The best Android phone",
+            "The Galaxy S23 Ultra is a massive phone with a massive price tag, but it's also the most powerful Android phone you can buy.",
             "2023-11-09",
-            "https://cdn.vox-cdn.com/thumbor/Ocz_QcxUdtaexp1pPTMygaqzbR8=/0x0:2000x1333/1200x628/filters:focal(1000x667:1001x668)/cdn.vox-cdn.com/uploads/chorus_asset/file/24396795/DSC04128_processed.jpg",
+            "https://media.wired.com/photos/63e69f8d5e165c71b6d0d9f4/191:100/w_1280,c_limit/Samsung-Galaxy-S23-Ultra-Gear.jpg",
         ),
     )
 
@@ -35,17 +36,32 @@ class ArticlesViewModel: BaseViewModel()  {
     val articlesState: StateFlow<ArticlesState>
         get() = _articlesState
 
-    init {
-        getArticles()
+    fun observeArticlesState(onChange: (ArticlesState) -> Unit): CancellableHandle {
+        val job = scope.launch {
+            articlesState.collect { state ->
+                onChange(state)
+            }
+        }
+
+        return CancellableHandle {
+            job.cancel()
+        }
     }
 
-    private fun getArticles() {
+    init {
+        loadArticles()
+    }
+
+    fun loadArticles() {
         scope.launch {
-            val fetchedArticles = fetchArticles()
-
-            delay(500.milliseconds)
-
-            _articlesState.emit(ArticlesState(articles = fetchedArticles))
+            _articlesState.emit(ArticlesState(loading = true))
+            try {
+                val fetchedArticles = fetchArticles()
+                delay(500.milliseconds)
+                _articlesState.emit(ArticlesState(articles = fetchedArticles))
+            } catch (e: Exception) {
+                _articlesState.emit(ArticlesState(error = e.message ?: "Unknown error"))
+            }
         }
     }
 
