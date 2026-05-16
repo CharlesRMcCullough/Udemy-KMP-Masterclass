@@ -8,26 +8,6 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 class ArticlesViewModel: BaseViewModel()  {
-    private val _articlesState: MutableStateFlow<ArticlesState> = MutableStateFlow(ArticlesState(loading = true))
-
-    val articlesState: StateFlow<ArticlesState>
-        get() = _articlesState
-
-    init {
-        getArticles()
-    }
-
-    private fun getArticles() {
-        scope.launch {
-            val fetchedArticles = fetchArticles()
-
-            delay(500.milliseconds)
-
-            _articlesState.emit(ArticlesState(articles = fetchedArticles))
-        }
-    }
-
-    private suspend fun fetchArticles(): List<Article> = mockArticles
 
     private val mockArticles = listOf(
         Article(
@@ -49,4 +29,25 @@ class ArticlesViewModel: BaseViewModel()  {
             "https://cdn.vox-cdn.com/thumbor/Ocz_QcxUdtaexp1pPTMygaqzbR8=/0x0:2000x1333/1200x628/filters:focal(1000x667:1001x668)/cdn.vox-cdn.com/uploads/chorus_asset/file/24396795/DSC04128_processed.jpg",
         ),
     )
+
+    private val _articlesState: MutableStateFlow<ArticlesState> = MutableStateFlow(ArticlesState(loading = true))
+
+    val articlesState: StateFlow<ArticlesState>
+        get() = _articlesState
+
+    init {
+        getArticles()
+    }
+
+    private fun getArticles() {
+        scope.launch {
+            val fetchedArticles = fetchArticles()
+
+            delay(500.milliseconds)
+
+            _articlesState.emit(ArticlesState(articles = fetchedArticles))
+        }
+    }
+
+    private suspend fun fetchArticles(): List<Article> = mockArticles
 }

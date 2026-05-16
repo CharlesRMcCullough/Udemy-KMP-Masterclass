@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.charlesmccullough.dailypulse.articles.Article
 import com.charlesmccullough.dailypulse.articles.ArticlesViewModel
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun ArticlesScreen(
@@ -34,7 +35,7 @@ fun ArticlesScreen(
         if (articlesState.value.error != null)
             ErrorMessage(articlesState.value.error!!)
         if (articlesState.value.articles.isNotEmpty())
-            ArticlesListView(articlesViewModel.articlesState.value.articles)
+            ArticlesListView(articlesState.value.articles)
     }
 }
 
